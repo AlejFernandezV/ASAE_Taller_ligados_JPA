@@ -19,7 +19,8 @@ public class Oficina {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
-    @Column(unique = true, length = 50)
+    @Column(unique = true, length = 20)
     private String nombre;
+    @Column(length = 20)
     private String ubicacion;
 }

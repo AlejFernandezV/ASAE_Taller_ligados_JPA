@@ -7,6 +7,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -26,4 +28,9 @@ public class Persona {
     private String apellido;
     @Column(unique = true, length = 50)
     private String correo;
+
+    //Relaciones
+    @OneToOne()//TO DO: PONER LAS CASCADE
+    @JoinColumn(name="oficina_id", referencedColumnName="id")
+    private Oficina objOficina;
 }

@@ -22,8 +22,9 @@ import lombok.NoArgsConstructor;
 public class EspacioFisico {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name="espacio_fisico_id")
     private int id;
-    @Column(unique = true, length = 50)
+    @Column(unique = true, length = 25)
     private String nombre;
     private String capacidad;
 
