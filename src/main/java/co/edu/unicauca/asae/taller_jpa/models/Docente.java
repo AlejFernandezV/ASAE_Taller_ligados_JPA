@@ -16,9 +16,6 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Docente extends Persona {
-    
-    private int oficina_id;
-
     @ManyToMany(
         cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
         mappedBy="lstDocentes"
