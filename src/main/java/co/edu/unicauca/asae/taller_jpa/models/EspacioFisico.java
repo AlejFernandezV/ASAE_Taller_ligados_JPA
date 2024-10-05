@@ -2,6 +2,7 @@ package co.edu.unicauca.asae.taller_jpa.models;
 
 import java.util.List;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -29,6 +30,10 @@ public class EspacioFisico {
     private String capacidad;
 
     // Relaciones
-    @OneToMany(fetch =  FetchType.LAZY, mappedBy = "objEspacioFisico")
+    @OneToMany(
+        cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, 
+        fetch =  FetchType.LAZY, 
+        mappedBy = "objEspacioFisico"
+    )
     private List<FranjaHoraria> lstFranjasHorarias;
 }

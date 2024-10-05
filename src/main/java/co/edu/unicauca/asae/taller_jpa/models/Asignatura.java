@@ -2,6 +2,7 @@ package co.edu.unicauca.asae.taller_jpa.models;
 
 import java.util.List;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -22,13 +23,19 @@ import lombok.NoArgsConstructor;
 public class Asignatura {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name="asignatura_id")
     private int id;
+
     @Column(length = 255)
     private String nombre;
+    
     @Column(length = 50)
     private String codigo;
 
     //Relaciones
-    @OneToMany(mappedBy="objAsignatura")
+    @OneToMany(
+        cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
+        mappedBy="objAsignatura"
+    )
     private List<Curso> lstCursos;
 }

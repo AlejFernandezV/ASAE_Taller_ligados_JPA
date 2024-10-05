@@ -1,5 +1,6 @@
 package co.edu.unicauca.asae.taller_jpa.models;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -21,16 +22,20 @@ import lombok.NoArgsConstructor;
 public class Persona {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @Column(name="persona_id")
     private int id;
+
     @Column(length = 50)
     private String nombre;
+
     @Column(length = 50)
     private String apellido;
+
     @Column(unique = true, length = 50)
     private String correo;
 
     //Relaciones
-    @OneToOne()//TO DO: PONER LAS CASCADE
-    @JoinColumn(name="oficina_id", referencedColumnName="id")
+    @OneToOne(cascade = {CascadeType.PERSIST})
+    @JoinColumn(name="oficina_id", referencedColumnName="oficina_id")
     private Oficina objOficina;
 }

@@ -2,6 +2,7 @@ package co.edu.unicauca.asae.taller_jpa.models;
 
 import java.util.Date;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -31,14 +32,14 @@ public class FranjaHoraria {
     private Date horaFin; 
     
     //Relaciones
-    @ManyToOne
+    @ManyToOne(cascade = {CascadeType.PERSIST})
     @JoinColumn(
         name = "espacio_fisico_id",
         referencedColumnName = "espacio_fisico_id"
     )
     private EspacioFisico objEspacioFisico;
 
-    @ManyToOne
+    @ManyToOne(cascade = {CascadeType.PERSIST})
     @JoinColumn(
         name = "curso_id",
         referencedColumnName = "curso_id"

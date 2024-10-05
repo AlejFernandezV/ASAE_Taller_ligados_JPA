@@ -18,9 +18,12 @@ import lombok.NoArgsConstructor;
 public class Oficina {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name="oficina_id")
     private int id;
+
     @Column(unique = true, length = 20)
     private String nombre;
+    
     @Column(length = 20)
     private String ubicacion;
 }

@@ -2,6 +2,7 @@ package co.edu.unicauca.asae.taller_jpa.models;
 
 import java.util.List;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -26,6 +27,7 @@ import lombok.NoArgsConstructor;
 public class Curso {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name="curso_id")
     private int id;
 
     @Column(length = 25)
@@ -33,12 +35,15 @@ public class Curso {
 
     //Relaciones
     @OneToMany(
+        cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
         fetch =  FetchType.EAGER, 
         mappedBy = "objCurso"
     )
     private List<FranjaHoraria> lstFranjasHorarias;
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade={})
+    @ManyToMany(
+        fetch = FetchType.EAGER
+    )
     @JoinTable(
         name="curso_docente",
         joinColumns=@JoinColumn(name="curso_id"),
@@ -46,7 +51,9 @@ public class Curso {
     )
     private List<Docente> lstDocentes;
     
-    @ManyToOne
+    @ManyToOne(
+        cascade = {CascadeType.PERSIST}
+    )
     @JoinColumn(
         name="asignatura_id",
         referencedColumnName = "asignatura_id"
