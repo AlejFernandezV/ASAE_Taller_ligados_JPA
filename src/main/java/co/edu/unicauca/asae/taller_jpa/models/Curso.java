@@ -26,7 +26,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Curso {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="curso_id")
     private int id;
 
@@ -58,5 +58,5 @@ public class Curso {
         name="asignatura_id",
         referencedColumnName = "asignatura_id"
     )
-    private Curso objCurso;
+    private Asignatura objAsignatura;
 }
