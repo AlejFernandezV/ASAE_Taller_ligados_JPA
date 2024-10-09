@@ -34,7 +34,4 @@ public class Persona {
     @Column(unique = true, length = 50)
     private String correo;
 
-    @Column(length=50)
-    private String rol;
-
 }
