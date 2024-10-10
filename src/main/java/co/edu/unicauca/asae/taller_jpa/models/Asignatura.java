@@ -34,7 +34,7 @@ public class Asignatura {
 
     //Relaciones
     @OneToMany(
-        cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
+        cascade = {CascadeType.PERSIST, CascadeType.REMOVE,},
         mappedBy= "objAsignatura"
     )
     private List<Curso> lstCursos;
