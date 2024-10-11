@@ -79,7 +79,7 @@ public class TallerJpaApplication implements CommandLineRunner {
     	if(objAsignatura.isPresent()){
 			Asignatura asignatura = objAsignatura.get();
 			
-			Optional<Persona> objDocente = this.personaRepository.findById(3);
+			Optional<Persona> objDocente = this.personaRepository.findById(1);
 			if(objDocente.isPresent()){
 				Docente docente = (Docente) objDocente.get();	
 				Curso objCurso = new Curso();
@@ -101,7 +101,7 @@ public class TallerJpaApplication implements CommandLineRunner {
 	private void almacenarFranjaHoraria(){
 
 		System.out.println("\n\n Almacenando Franja Horaria");
-		Optional<Curso> objCurso = this.cursoRepository.findById(4);
+		Optional<Curso> objCurso = this.cursoRepository.findById(2);
 		if(objCurso.isPresent()){
 			Curso curso = objCurso.get();
 
@@ -198,25 +198,24 @@ public class TallerJpaApplication implements CommandLineRunner {
 		if (cursoRepository.existsById(idCurso)) {
 			Curso curso = cursoRepository.findById(idCurso).get();
 
-
-			if(curso.getLstFranjasHorarias()!= null && curso.getLstFranjasHorarias().isEmpty()){
-				this.franjaHorariaRepository.deleteAll(curso.getLstFranjasHorarias());
-				System.out.println("Franjas horarias asociadas al curso"+curso.getNombre()+"Eliminadas");
+			if(curso.getLstDocentes() != null){
+				for (Docente docente : curso.getLstDocentes()) {
+					docente.getLstCursos().remove(curso);
+					this.personaRepository.save(docente);
+				}
+				curso.setLstDocentes(null);
 			}
-			this.cursoRepository.deleteById(idCurso);
-			System.out.println("Curso con ID " + idCurso + "y nombres"+curso.getNombre()+" eliminado.");
+
+			if(curso.getObjAsignatura() != null){
+				curso.getObjAsignatura().getLstCursos().remove(curso);
+				this.asignaturaRepository.save(curso.getObjAsignatura());
+				curso.setObjAsignatura(null);
+			}
+
+			cursoRepository.deleteById(idCurso); // Elimina el curso
+			System.out.println("Curso con ID " + idCurso + " eliminado");
 		} else {
 			System.out.println("No se encontró un curso con ID " + idCurso);
 		}
 	}
-
-	/*private void eliminarCurso(int idCurso){
-		if (cursoRepository.existsById(idCurso)) {
-			cursoRepository.deleteById(idCurso);
-			System.out.println("Curso con ID " + idCurso + " eliminado.");
-		} else {
-			System.out.println("No se encontró un curso con ID " + idCurso + ".");
-		}
-	}*/
-
 }
