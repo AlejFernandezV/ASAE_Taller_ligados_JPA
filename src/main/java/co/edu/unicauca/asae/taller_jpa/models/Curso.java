@@ -11,6 +11,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
@@ -39,12 +40,16 @@ public class Curso {
         fetch =  FetchType.LAZY, 
         mappedBy = "objCurso"
     )
-    private List<FranjaHoraria> lstFranjasHorarias;
+    private List<FranjaHoraria> lstFranjasHorarias = new ArrayList<>();
 
     @ManyToMany(
         cascade = {CascadeType.PERSIST},
-        fetch = FetchType.EAGER,
-        mappedBy = "lstCursos"
+        fetch = FetchType.EAGER
+    )
+    @JoinTable(
+        name = "curso_docente", 
+        joinColumns=@JoinColumn(name="curso_id"),
+        inverseJoinColumns=@JoinColumn(name ="docente_id")
     )
     private List<Docente> lstDocentes = new ArrayList<>();
     

@@ -1,5 +1,6 @@
 package co.edu.unicauca.asae.taller_jpa.models;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.persistence.CascadeType;
@@ -35,5 +36,5 @@ public class EspacioFisico {
         fetch =  FetchType.LAZY, 
         mappedBy = "objEspacioFisico"
     )
-    private List<FranjaHoraria> lstFranjasHorarias;
+    private List<FranjaHoraria> lstFranjasHorarias = new ArrayList<>();
 }
