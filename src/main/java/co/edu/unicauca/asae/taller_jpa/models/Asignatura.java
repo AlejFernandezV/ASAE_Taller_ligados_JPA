@@ -1,5 +1,6 @@
 package co.edu.unicauca.asae.taller_jpa.models;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.persistence.CascadeType;
@@ -37,5 +38,5 @@ public class Asignatura {
         cascade = {CascadeType.PERSIST, CascadeType.REMOVE,},
         mappedBy= "objAsignatura"
     )
-    private List<Curso> lstCursos;
+    private List<Curso> lstCursos = new ArrayList<>();
 }

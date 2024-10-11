@@ -1,7 +1,6 @@
 package co.edu.unicauca.asae.taller_jpa;
 
 import java.time.LocalTime;
-import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,7 +48,14 @@ public class TallerJpaApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-		eliminarCurso(3);
+		almacenarDocente();
+		almacenarCurso();
+		almacenarFranjaHoraria();
+		
+		// eliminarCurso(2);
+
+		this.consultarFranjasHorarias();
+		this.consultarFranjaHorariaDocente(2);
 	}
 
 	@Transactional
@@ -60,7 +66,7 @@ public class TallerJpaApplication implements CommandLineRunner {
 		Docente docente = new Docente();
 		docente.setNombre("sara");
 		docente.setApellido("garcia");
-		docente.setCorreo("sagar.perez@unicauca.edu.co");
+		docente.setCorreo("sargar@unicauca.edu.co");
 
 		Oficina oficina = new Oficina();
 		oficina.setNombre("Oficina 2");
@@ -79,35 +85,43 @@ public class TallerJpaApplication implements CommandLineRunner {
     	if(objAsignatura.isPresent()){
 			Asignatura asignatura = objAsignatura.get();
 			
-			Optional<Persona> objDocente = this.personaRepository.findById(3);
-			if(objDocente.isPresent()){
-				Docente docente = (Docente) objDocente.get();	
-				Curso objCurso = new Curso();
-				objCurso.setNombre("Ingeniería de alimentos 2024-2");
-				objCurso.setObjAsignatura(asignatura);
-				asignatura.getLstCursos().add(objCurso);
-				docente.getLstCursos().add(objCurso);
-				objCurso.setLstDocentes(List.of(docente));
-				this.cursoRepository.save(objCurso);
-			}else{
-				System.out.println("No se encontro docente");
-			}
+			Docente objDocente = new Docente();
+			objDocente.setNombre("Cristian");
+			objDocente.setApellido("Perez");
+			objDocente.setCorreo("cris.perez@unicauca.edu.co");
+			
+			Curso objCurso = new Curso();
+			objCurso.setNombre("Ingeniería de alimentos 2024-2");
+			objCurso.setObjAsignatura(asignatura);
+			asignatura.getLstCursos().add(objCurso);
+			
+			//Relación bidireccional
+			objDocente.getLstCursos().add(objCurso);
+			objCurso.getLstDocentes().add(objDocente);
+
+			this.cursoRepository.save(objCurso);
 		}else{
 			System.out.println("No se encontro una asignatura");
 		}
 		
 	}
 
+	@Transactional
 	private void almacenarFranjaHoraria(){
 
 		System.out.println("\n\n Almacenando Franja Horaria");
-		Optional<Curso> objCurso = this.cursoRepository.findById(4);
+
+		Optional<Curso> objCurso = this.cursoRepository.findById(2);
+
 		if(objCurso.isPresent()){
 			Curso curso = objCurso.get();
 
 			Optional<EspacioFisico> objEspacioFisico = this.espacioFisicoRepository.findById(1);
+
 			if(objEspacioFisico.isPresent()){
+
 				EspacioFisico espacioFisico = objEspacioFisico.get();
+				
 				FranjaHoraria objFranjaHoraria1 = new FranjaHoraria();
 				objFranjaHoraria1.setDia("Lunes");
 				objFranjaHoraria1.setHoraInicio(LocalTime.of(9, 0));
@@ -122,11 +136,10 @@ public class TallerJpaApplication implements CommandLineRunner {
 				objFranjaHoraria2.setObjCurso(curso);
 				objFranjaHoraria2.setObjEspacioFisico(espacioFisico);
 
-				List<FranjaHoraria> lstFranjaHorarias = List.of(objFranjaHoraria1,objFranjaHoraria2);
+				curso.getLstFranjasHorarias().add(objFranjaHoraria1);
+				curso.getLstFranjasHorarias().add(objFranjaHoraria2);
 
-				curso.getLstFranjasHorarias().addAll(lstFranjaHorarias);
-
-				this.franjaHorariaRepository.saveAll(lstFranjaHorarias);
+				this.franjaHorariaRepository.saveAll(curso.getLstFranjasHorarias());
 			}else{
 				System.out.println("No se encontro un espacio fisico");
 			}
@@ -167,7 +180,7 @@ public class TallerJpaApplication implements CommandLineRunner {
 			System.out.println("\n\nImprimiendo las franjas horarias del Docente "+objDocente.getNombre()+" "+objDocente.getApellido());
 
 			System.out.println("------ Cursos ------");
-			if(objDocente.getLstCursos() != null){
+			if(!objDocente.getLstCursos().isEmpty()){
 				for(Curso objCurso: objDocente.getLstCursos()){
 					System.out.println("\t Nombre: "+objCurso.getNombre());
 					System.out.println("\t\t------ Franjas horarias ------");
@@ -198,13 +211,22 @@ public class TallerJpaApplication implements CommandLineRunner {
 		if (cursoRepository.existsById(idCurso)) {
 			Curso curso = cursoRepository.findById(idCurso).get();
 
-
-			if(curso.getLstFranjasHorarias()!= null && curso.getLstFranjasHorarias().isEmpty()){
-				this.franjaHorariaRepository.deleteAll(curso.getLstFranjasHorarias());
-				System.out.println("Franjas horarias asociadas al curso"+curso.getNombre()+"Eliminadas");
+			if(curso.getLstDocentes() != null){
+				for (Docente docente : curso.getLstDocentes()) {
+					docente.getLstCursos().remove(curso);
+					this.personaRepository.save(docente);
+				}
+				curso.setLstDocentes(null);
 			}
-			this.cursoRepository.deleteById(idCurso);
-			System.out.println("Curso con ID " + idCurso + "y nombres"+curso.getNombre()+" eliminado.");
+
+			if(curso.getObjAsignatura() != null){
+				curso.getObjAsignatura().getLstCursos().remove(curso);
+				this.asignaturaRepository.save(curso.getObjAsignatura());
+				curso.setObjAsignatura(null);
+			}
+
+			cursoRepository.deleteById(idCurso);
+			System.out.println("Curso con ID " + idCurso + " eliminado");
 		} else {
 			System.out.println("No se encontró un curso con ID " + idCurso);
 		}

@@ -17,7 +17,6 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-
 @Table(name="persona")
 public class Persona {
     @Id

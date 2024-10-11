@@ -1,12 +1,12 @@
 package co.edu.unicauca.asae.taller_jpa.models;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToOne;
 import lombok.AllArgsConstructor;
@@ -32,12 +32,8 @@ public class Docente extends Persona {
 
     @ManyToMany(
         cascade = {CascadeType.PERSIST},
-        fetch = FetchType.EAGER
+        fetch = FetchType.EAGER,
+        mappedBy = "lstDocentes"
     )
-    @JoinTable(
-        name = "curso_docente", 
-        joinColumns=@JoinColumn(name="docente_id"),
-        inverseJoinColumns=@JoinColumn(name ="curso_id")
-    )
-    private List<Curso> lstCursos;
+    private List<Curso> lstCursos = new ArrayList<>();
 }
