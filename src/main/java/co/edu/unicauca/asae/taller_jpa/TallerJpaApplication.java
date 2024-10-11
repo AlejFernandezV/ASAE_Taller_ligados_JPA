@@ -48,10 +48,14 @@ public class TallerJpaApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-		// almacenarDocente();
-		// almacenarCurso();
-		// almacenarFranjaHoraria();
-		eliminarCurso(2);
+		almacenarDocente();
+		almacenarCurso();
+		almacenarFranjaHoraria();
+		
+		// eliminarCurso(2);
+
+		this.consultarFranjasHorarias();
+		this.consultarFranjaHorariaDocente(2);
 	}
 
 	@Transactional
@@ -176,7 +180,7 @@ public class TallerJpaApplication implements CommandLineRunner {
 			System.out.println("\n\nImprimiendo las franjas horarias del Docente "+objDocente.getNombre()+" "+objDocente.getApellido());
 
 			System.out.println("------ Cursos ------");
-			if(objDocente.getLstCursos() != null){
+			if(!objDocente.getLstCursos().isEmpty()){
 				for(Curso objCurso: objDocente.getLstCursos()){
 					System.out.println("\t Nombre: "+objCurso.getNombre());
 					System.out.println("\t\t------ Franjas horarias ------");
@@ -206,14 +210,23 @@ public class TallerJpaApplication implements CommandLineRunner {
 	private void eliminarCurso(int idCurso){
 		if (cursoRepository.existsById(idCurso)) {
 			Curso curso = cursoRepository.findById(idCurso).get();
-			curso.getLstDocentes().clear();
 
-			for(Docente objDocente: curso.getLstDocentes()){
-				objDocente.getLstCursos().remove(curso);
+			if(curso.getLstDocentes() != null){
+				for (Docente docente : curso.getLstDocentes()) {
+					docente.getLstCursos().remove(curso);
+					this.personaRepository.save(docente);
+				}
+				curso.setLstDocentes(null);
 			}
 
-			this.cursoRepository.delete(curso);
-			System.out.println("Curso con ID " + idCurso + " y nombre "+curso.getNombre()+" eliminado.");
+			if(curso.getObjAsignatura() != null){
+				curso.getObjAsignatura().getLstCursos().remove(curso);
+				this.asignaturaRepository.save(curso.getObjAsignatura());
+				curso.setObjAsignatura(null);
+			}
+
+			cursoRepository.deleteById(idCurso);
+			System.out.println("Curso con ID " + idCurso + " eliminado");
 		} else {
 			System.out.println("No se encontró un curso con ID " + idCurso);
 		}
